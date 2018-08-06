@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+hello emb
+<script>
+    <template>
+    <Button type="primary" @click="modal1 = true">Display dialog box</Button>
+
+    </template>
+    <script>
+    export default {
+        data () {
+            return {
+                modal1: false
+            }
+        },
+        methods: {
+            ok () {
+                this.$Message.info('Clicked ok');
+            },
+            cancel () {
+                this.$Message.info('Clicked cancel');
+            }
+        }
+    }
+</script>
+
+</script>
+</body>
+</html>

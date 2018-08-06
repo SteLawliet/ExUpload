@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>iview ExUoload</title>
+    <link rel="stylesheet" type="text/css" href="static/styles/iview.css">
+    <script type="text/javascript" src="static/vue.min.js"></script>
+    <script type="text/javascript" src="static/iview.min.js"></script>
+    <script type="text/javascript" src="static/axios.min.js"></script>
+    <style>
+        .index {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+        }
+        
+        .index h1 {
+            height: 150px;
+        }
+        
+        .index h1 img {
+            height: 100%;
+        }
+        
+        .index h2 {
+            color: #666;
+            margin-bottom: 200px;
+        }
+        
+        .index h2 p {
+            margin: 0 0 50px;
+        }
+        
+        .index .ivu-row-flex {
+            height: 100%;
+        }
+        .demo-spin-icon-load {
+            animation: ani-demo-spin 1s linear infinite;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="index">
+            <Row>
+                <i-Col span="4">
+                    &nbsp;
+                </i-Col>
+                <i-Col span="16">
+                    <Upload multiple
+                            :on-success="reUpdate"
+                            type="drag"
+                            :action="upload0"
+                    >
+                        <div style="padding: 20px 0">
+                            <Icon type="ios-cloud-upload" size="52" style="i-color: #3399ff"></Icon>
+                            <p>Click or drag files here to upload</p>
+                        </div>
+                    </Upload>
+                </i-Col>
+                <i-Col span="4">
+                </i-Col>
+            </Row>
+            <br>
+            <Row>
+
+                <i-col span="24">
+                    <i-Table :columns="columns1" :data="data1"></i-Table>
+                </i-col>
+            </Row>
+            <!--<i-button @click="update">update</i-button>-->
+
+            <Icon type="refresh"></Icon>
+        </div>
+
+    </div>
+    <script>
+        var host = window.location.origin;
+        var ip0 = "192.168.25.233";
+        var url0 = host+"/MServlet?method=";
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                flag:false,
+                upload0 : url0+"Upload",
+                visible: false,
+                columns1: [
+                    {
+                        title: 'ID',
+                        key: 'id',
+                        width: 50
+                    },
+                    {
+                        title: 'Name',
+                        key: 'name'
+                    },
+                    {
+                        title: 'size',
+                        key: 'size',
+                        width: 100
+                    },
+                    {
+                        title: 'type',
+                        key: 'type'
+                    },
+                    {
+                        title: 'update',
+                        key: 'update'
+                    },
+                    {
+                        title: 'path',
+                        key: 'path',
+                        ellipsis: true,
+                        render: (h, params) => {
+                            let _this = this.vm;
+                            return h('div', [
+                                h('i-Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click:
+                                            () => {
+                                                _this.download(params);
+                                            }
+                                    }
+                                }, 'Download')
+                            ]);
+                        }
+
+                    }
+                ],
+                data1: []
+            },
+            created() {
+                this.reUpdate();
+            },
+            methods: {
+                handleSpinCustom() {
+                    this.$Spin.show({
+                        render: (h) => {
+                            return h('div', [
+                                h('Icon', {
+                                    'class': 'demo-spin-icon-load',
+                                    props: {
+                                        type: 'load-c',
+                                        size: 18
+                                    }
+                                }),
+                                h('div', 'Loading')
+                            ])
+                        }
+                    });
+                    setTimeout(() => {
+                        this.$Spin.hide();
+                    }, 1000);
+                },
+                download(p) {
+                    const url =
+                        `${url0}Download&filename=${p.row.name}`;
+                    window.location.assign(url);
+                },
+                handleStart() {
+                    this.$Modal.info({
+                        title: 'Bravo',
+                        content: 'Now, enjoy the convenience of iView.'
+                    });
+                },
+                reUpdate() {
+                    this.handleSpinCustom();
+                    let url = url0+"showFileList";
+                    axios.get(url).then((res) => {
+                        let i0 = 1;
+                        this.data1 = res.data;
+                        this.data1.forEach(val => val.id = i0++);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
